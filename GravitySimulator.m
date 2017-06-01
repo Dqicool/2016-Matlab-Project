@@ -1,26 +1,26 @@
 cc
 Initial
-GravitySimulation(ttarget,dt,G,r0,X,Y,sizee,m,vx,vy,Fx,Fy)
-function M = GravitySimulation(ttarget,dt,G,r0,X,Y,sizee,m,vx,vy,Fx,Fy)
+GravitySimulation(ttarget,dt,G,r0,X,Y,sizee,m,vx,vy,ResMat)
+function M = GravitySimulation(ttarget,dt,G,r0,X,Y,sizee,m,vx,vy,ResMat)
     % 采用积分研究体系外作用力时 制约与实际相差较大的点 使稳定性增加 但仍然无法稳定。。。大约仅能稳定十秒左右;
     % 强行令F < 0.0001 的认为 0 tmd稳定了 也算是靠谱吧
     vidObj = VideoWriter('bbb.avi');
     open(vidObj);
-    resMat = [zeros(5,sizee);zeros(sizee - 10,5),ones(sizee - 10),zeros(sizee - 10,5);zeros(5,sizee)];
+%    resMat = [zeros(5,sizee);zeros(sizee - 10,5),ones(sizee - 10),zeros(sizee - 10,5);zeros(5,sizee)];
     i = 0;
     for t=0:dt:ttarget
         [Fxout, Fyout]  = Foutint(X, Y, G, m);
         [Fxin , Fyin]   = Fin(X, Y, G, m, r0);
-        Fx              = (Fxin + Fxout) .* resMat;
+        Fx              = (Fxin + Fxout) .* ResMat;
         Fx              = (abs(Fx) > 2.6121e-05) .* Fx;
-        Fy              = (Fyin + Fyout) .* resMat;
+        Fy              = (Fyin + Fyout) .* ResMat;
         Fy              = (abs(Fy) > 2.6121e-05) .* Fy;
         vx              = vx + Fx .* dt ./ m;
         vy              = vy + Fy .* dt ./ m;
         % 检查球之间的碰撞 并讨论粘性影响
         [vx, vy] = PosCheck(vx, vy, X, Y, r0, m);
-        vx = vx .* resMat;
-        vy = vy .* resMat;
+        vx = vx .* ResMat;
+        vy = vy .* ResMat;
         X               = X + vx.*dt;
         Y               = Y + vy.*dt;
         % 与器壁碰撞 如有点逸散到空间中 则那他妈就不准了
