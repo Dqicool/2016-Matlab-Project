@@ -5,11 +5,12 @@
     [X,Y]   = meshgrid(-20:20);
     sizee   = max(size(X));
     m       = ones(sizee);
+    m(21,21)= 5;
     vx      = zeros(sizee);
     vx(15,21) = 0.1;
-    vx(26,21) = -0.1;  
+    vx(27,21) = -0.1;  
     vy      = zeros(sizee);
     vy(21,15) = -0.1;
-    vy(21,26) = 0.1;  
+    vy(21,27) = 0.1;  
     Fx      = zeros(sizee);
     Fy      = zeros(sizee);
