@@ -1,35 +1,41 @@
 cc
 Initial
-GravitySimulation(ttarget,dt,G,r0,X,Y,sizee,m,vx,vy,ResMat)
+M = GravitySimulation(ttarget,dt,G,r0,X,Y,sizee,m,vx,vy,ResMat);
+
 function M = GravitySimulation(ttarget,dt,G,r0,X,Y,sizee,m,vx,vy,ResMat)
-    % 采用积分研究体系外作用力时 制约与实际相差较大的点 使稳定性增加 但仍然无法稳定。。。大约仅能稳定十秒左右;
-    % 强行令F < 0.0001 的认为 0 tmd稳定了 也算是靠谱吧
-    vidObj = VideoWriter('bbb.avi');
+    vidObj = VideoWriter('aaa.avi');
     open(vidObj);
-%    resMat = [zeros(5,sizee);zeros(sizee - 10,5),ones(sizee - 10),zeros(sizee - 10,5);zeros(5,sizee)];
+%   resMat = [zeros(5,sizee);zeros(sizee - 10,5),ones(sizee - 10),zeros(sizee - 10,5);zeros(5,sizee)];
     i = 0;
     for t=0:dt:ttarget
-        [Fxout, Fyout]  = Foutint(X, Y, G, m);
-        [Fxin , Fyin]   = Fin(X, Y, G, m, r0);
-        Fx              = (Fxin + Fxout) .* ResMat;
-        Fx              = (abs(Fx) > 2.6121e-05) .* Fx;
-        Fy              = (Fyin + Fyout) .* ResMat;
-        Fy              = (abs(Fy) > 2.6121e-05) .* Fy;
+        %第一次计算F1
+        [Fx1,Fy1]           = Fmain(X,Y,G,m,r0,ResMat);
+        %第一次无需考虑碰撞
+        %F->R
+        vx1             = vx + Fx1 .* dt ./ m;
+        vy1             = vy + Fy1 .* dt ./ m;
+        vx1             = vx1 .* ResMat;
+        vy1             = vy1 .* ResMat;
+        X1             = X + vx.*dt;
+        Y1             = Y + vy.*dt;
+        [~, ~, X1, Y1]  = EdgeCheck(vx1,vy1,X1,Y1,sizee);
+        %利用第一次结果X1Y1计算第二次F2
+        [Fx2, Fy2]      = Fmain(X1,Y1,G,m,r0,ResMat);
+        %算出二阶龙格库塔F值
+        Fx              = (Fx1 + Fx2)./2;
+        Fy              = (Fy1 + Fy2)./2;
+        %F->R
         vx              = vx + Fx .* dt ./ m;
         vy              = vy + Fy .* dt ./ m;
-        % 检查球之间的碰撞 并讨论粘性影响
-        [vx, vy] = PosCheck(vx, vy, X, Y, r0, m);
-        vx = vx .* ResMat;
-        vy = vy .* ResMat;
+        [vx, vy]        = PosCheck(vx, vy, X, Y, r0, m);
+        vx              = vx .* ResMat;
+        vy              = vy .* ResMat;
         X               = X + vx.*dt;
         Y               = Y + vy.*dt;
-        % 与器壁碰撞 如有点逸散到空间中 则那他妈就不准了
-        X               = (X < -sizee/2) .* (X + 2.*(-sizee/2-X)) + (X > sizee/2) .* (X - 2.*(X - sizee/2)) + X .* (X <= sizee/2) .* (X >= -sizee/2);
-        Y               = (Y < -sizee/2) .* (Y + 2.*(-sizee/2-Y)) + (Y > sizee/2) .* (Y - 2.*(Y - sizee/2)) + Y .* (Y <= sizee/2) .* (Y >= -sizee/2);
-        vx              = (X < -sizee/2) .* (-vx) + (X > sizee/2) .* (-vx) + vx.* (X <= sizee/2) .* (X >= -sizee/2);
-        vy              = (Y < -sizee/2) .* (-vy) + (Y > sizee/2) .* (-vy) + vy.* (Y <= sizee/2) .* (Y >= -sizee/2);
+        [vx, vy, X, Y]  = EdgeCheck(vx,vy,X,Y,sizee);        
         plot(X,Y,'r.');axis equal;axis([-15.5,15.5,-15.5,15.5]);
-        i = i+1
+        i = i+1;
+        disp(i);
         M(i) = getframe;
         writeVideo(vidObj,M(i));
     end

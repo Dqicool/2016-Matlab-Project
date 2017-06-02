@@ -6,7 +6,7 @@
     [X,Y]   = meshgrid(-20:20);
     sizee   = max(size(X));
     m       = ones(sizee);
-    m(21,21)= 15;
+    m(21,21)= 13.125;
     vx      = zeros(sizee);
     vx(15,21) =  1;
     vx(27,21) = -1;  
