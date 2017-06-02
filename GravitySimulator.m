@@ -1,13 +1,13 @@
 cc
 Initial
-M = GravitySimulation(ttarget,dt,G,r0,X,Y,sizee,m,vx,vy,ResMat);
+M = GravitySimulation(dt,G,r0,X,Y,sizee,m,vx,vy,ResMat);
 
-function M = GravitySimulation(ttarget,dt,G,r0,X,Y,sizee,m,vx,vy,ResMat)
+function M = GravitySimulation(dt,G,r0,X,Y,sizee,m,vx,vy,ResMat)
     vidObj = VideoWriter('aaa.avi');
     open(vidObj);
 %   resMat = [zeros(5,sizee);zeros(sizee - 10,5),ones(sizee - 10),zeros(sizee - 10,5);zeros(5,sizee)];
     i = 0;
-    for t=0:dt:ttarget
+    while 1
         %第一次计算F1
         [Fx1,Fy1]           = Fmain(X,Y,G,m,r0,ResMat);
         %第一次无需考虑碰撞
@@ -39,5 +39,4 @@ function M = GravitySimulation(ttarget,dt,G,r0,X,Y,sizee,m,vx,vy,ResMat)
         M(i) = getframe;
         writeVideo(vidObj,M(i));
     end
-    close(vidObj)
 end

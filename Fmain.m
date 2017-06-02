@@ -1,6 +1,6 @@
 function [Fx,Fy] = Fmain(X,Y,G,m,r0,ResMat)
     [Fxout, Fyout]  = Foutint(X, Y, G, m);
-    [Fxin , Fyin]   = Finnew(X, Y, G, m, r0);
+    [Fxin , Fyin]   = Fintwo(X, Y, G, m, r0);
     Fx              = (Fxin + Fxout) .* ResMat;
     Fx              = (abs(Fx) > 2.6121e-05) .* Fx;
     Fy              = (Fyin + Fyout) .* ResMat;
@@ -30,7 +30,7 @@ sizee =41;
     (log(p0 + (p0.^2 + t0.^2).^(1/2)) - log(p0 + (p0.^2 + t1.^2).^(1/2))));
 end
 
-function [Fxin , Fyin ] = Fin(X, Y, G, m, r0)
+function [Fxin , Fyin ] = Finone(X, Y, G, m, r0)
 %对于体系内质点的影响 累加即可
     sizee = 41;
     Fxin    = zeros(sizee);
@@ -60,7 +60,7 @@ function [dfx,dfy] = dfff(X0, Y0, X, Y, r0)
     end
 end
 
-function [Fxin , Fyin ] = Finnew(X, Y, G, m, r0)
+function [Fxin , Fyin ] = Fintwo(X, Y, G, m, r0)
     sizee = 41;
     Fxin    = zeros(sizee);
     Fyin    = zeros(sizee); 
