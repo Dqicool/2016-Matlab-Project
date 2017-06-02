@@ -15,7 +15,7 @@
     ResMat = (rr<=225) .* (rr ~= 0);
     for kkk = 1:sizee^2
         if rr(kkk) ~= 0
-            omega = 1.001 * (G .* m(21,21) ./ rr(kkk).^(3/2)).^(1/2);
+            omega = 1.002 * (G .* m(21,21) ./ rr(kkk).^(3/2)).^(1/2);
             vy(kkk) = omega .* X(kkk);
             vx(kkk) = omega .* -Y(kkk);
         end
