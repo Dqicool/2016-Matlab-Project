@@ -3,10 +3,20 @@ Initial
 M = GravitySimulation(dt,G,r0,X,Y,sizee,m,vx,vy,ResMat,1);
 
 function M = GravitySimulation(dt,G,r0,X,Y,sizee,m,vx,vy,ResMat,ode)
-    vidObj = VideoWriter('ddd.avi');
+    vidObj = VideoWriter('asd.avi');
     open(vidObj);
     i = 0;
     while 1
+        for www = 1:sizee
+            R22  = (X - X(www)).^2 + (Y - Y(www)).^2;
+            if sum((R22>0.1) .* (R22<0.9)) > 1
+                dt = 0.01;
+                break;
+            else
+                dt = 0.1;
+            end
+        end
+        dt
         %第一次计算F1
         [Fx1,Fy1]           = Fmain(X,Y,G,m,r0,ResMat);
         %第一次无需考虑碰撞
@@ -42,7 +52,8 @@ function M = GravitySimulation(dt,G,r0,X,Y,sizee,m,vx,vy,ResMat,ode)
             Y               = Y + vy.*dt;
             [vx, vy, X, Y]  = EdgeCheck(vx,vy,X,Y,sizee);        
         end
-        plot(X,Y,'w.');axis equal;view(3);axis([-15.5,15.5,-15.5,15.5,-10,10]);set(gcf,'color',[0 0 0]/255);axis off
+        plot(X,Y,'r.');axis equal;%view(3);
+        %axis([-15.5,15.5,-15.5,15.5,-10,10]);set(gcf,'color',[0 0 0]/255);axis off
         i = i+1;
         disp(i);
         if i ==1
